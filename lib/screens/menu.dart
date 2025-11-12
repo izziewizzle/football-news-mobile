@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:football_news/widgets/left_drawer.dart';
-import 'package:football_news/screens/newslist_form.dart';
+import 'package:football_news/widgets/news_card.dart';
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
+  const MyHomePage({super.key});
 
   final String nama = "Izzati Maharani Yusmananda";
   final String npm = "2406361675";
   final String kelas = "F";
 
-  final List<ItemHomepage> items = [
-    ItemHomepage("See Football News", Icons.newspaper),
-    ItemHomepage("Add News", Icons.add),
-    ItemHomepage("Logout", Icons.logout),
+  final List<MenuItem> items = const [
+    MenuItem(name: "See Football News", icon: Icons.newspaper),
+    MenuItem(name: "Add News", icon: Icons.add),
+    MenuItem(name: "Logout", icon: Icons.logout),
   ];
 
   @override
@@ -21,22 +21,20 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Football News',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      drawer: LeftDrawer(),
+      drawer: const LeftDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Row untuk 3 InfoCard
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            Wrap(
+              alignment: WrapAlignment.spaceEvenly,
+              spacing: 12,
+              runSpacing: 12,
               children: [
                 InfoCard(title: 'NPM', content: npm),
                 InfoCard(title: 'Name', content: nama),
@@ -59,74 +57,22 @@ class MyHomePage extends StatelessWidget {
                   ),
                   GridView.count(
                     primary: false,
+                    physics: const NeverScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(20),
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
                     crossAxisCount: 3,
                     shrinkWrap: true,
-                    children: items.map((item) => ItemCard(item)).toList(),
+                    children: items
+                        .map(
+                          (item) => ItemCard(item: item),
+                        )
+                        .toList(),
                   ),
                 ],
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class ItemHomepage {
-  final String name;
-  final IconData icon;
-
-  ItemHomepage(this.name, this.icon);
-}
-
-class ItemCard extends StatelessWidget {
-  final ItemHomepage item;
-
-  const ItemCard(this.item, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Theme.of(context).colorScheme.secondary,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        onTap: () {
-        // Memunculkan SnackBar ketika diklik
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(
-              content: Text("Kamu telah menekan tombol ${item.name}!")));
-
-        // Navigate ke route yang sesuai (tergantung jenis tombol)
-        if (item.name == "Add News") {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const NewsFormPage(),
-            ),
-          );
-        }
-      },
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(item.icon, color: Colors.white, size: 30.0),
-                const SizedBox(height: 5),
-                Text(
-                  item.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );
@@ -141,16 +87,19 @@ class InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
     return Card(
       elevation: 2.0,
       child: Container(
-        width: MediaQuery.of(context).size.width / 3.5,
+        width: width / 3.5,
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8.0),
-            Text(content),
+            Text(content, textAlign: TextAlign.center),
           ],
         ),
       ),
